@@ -3,7 +3,7 @@
 This repository contains the official implementation of our NeurIPS 2025 paper:
 **"FlyLoRA: Boosting Task Decoupling and Parameter Efficiency via Implicit Rank-Wise Mixture-of-Experts."**
 
-Our implementation is built upon the [PEFT](https://github.com/huggingface/peft) library. Modified source files are mainly primarily located in:
+Our implementation is built upon the [PEFT](https://github.com/huggingface/peft) library. Modified source files are primarily located in:
 - `src/peft/tuners/lora/layer.py`
 - `src/peft/tuners/lora/bnb.py`
 - `src/peft/tuners/lora/config.py`
