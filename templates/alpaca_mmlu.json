@@ -1,0 +1,6 @@
+{
+    "description": "MMLU evaluation template - enforced numeric selection",
+    "prompt_input": "Carefully read the following question and select the most correct answer from the given choices. You must output ONLY a single number between 0 and 3 corresponding to the option index. Do not include any other text.\n\n### Question:\n{instruction}\n\n### Options:\n{input}\n\n### Answer Index:",
+    "prompt_no_input": "Answer the following question. You must output ONLY a single number between 0 and 3.\n\n### Question:\n{instruction}\n\n### Answer Index:",
+    "response_split": "### Answer Index:"
+}

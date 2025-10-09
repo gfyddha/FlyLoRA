@@ -1,0 +1,6 @@
+{
+    "description": "Template used by meta-training.",
+    "prompt_input": "{instruction}\n\n{input}\n\n",
+    "prompt_no_input": "{instruction}\n\n",
+    "response_split": ""
+}
