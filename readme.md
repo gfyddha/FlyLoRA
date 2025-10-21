@@ -49,7 +49,7 @@ If you find this repository useful, please consider citing our paper:
 @inproceedings{zou2025flylora,
     title={FlyLoRA: Boosting Task Decoupling and Parameter Efficiency via Implicit Rank-Wise Mixture-of-Experts},
     author={Zou, Heming and Zang, Yunliang and Xu, Wutong and Zhu, Yao and Ji, Xiangyang},
-    journal={Advances in Neural Information Processing Systems},
+    booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems},
     year={2025}
 }
 ```
