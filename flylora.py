@@ -35,18 +35,7 @@ class FlyLoRALinear(nn.Module):
         nn.init.zeros_(self.B)
 
         # Expert-wise bias term for load balancing d ∈ R^r
-        self.d = nn.Parameter(torch.zeros(r))
-        
-        # Buffer to track expert assignment counts
-        self.register_buffer("assignment_count", torch.zeros(r))
-        self.register_buffer("expected_frequency", torch.ones(r) * (k / r))
-
-    @torch.no_grad()
-    def update_bias(self):
-        """Update expert bias for load balancing: d_i ← d_i + u·sign(̄c_i - c_i)"""
-        delta = torch.sign(self.expected_frequency - self.assignment_count)
-        self.d.add_(self.bias_lr * delta)
-        self.assignment_count.zero_()
+        self.d = nn.Parameter(torch.zeros(r), requires_grad=False)
 
     def forward(self, x):
         """
@@ -63,20 +52,20 @@ class FlyLoRALinear(nn.Module):
         y_biased = y + self.d  # (batch_size, r)
         
         # Select top-k experts based on magnitude
-        _, indices = torch.topk(y_biased.abs(), self.k, dim=-1)  # (batch_size, k)
+        _, selected_experts = torch.topk(y_biased.abs(), self.k, dim=-1)  # (batch_size, k)
         
         # Create mask for activated experts
         mask = torch.zeros_like(y_biased)  # (batch_size, r)
-        mask.scatter_(-1, indices, 1.0)  # set top-k positions to 1
+        mask.scatter_(-1, selected_experts, 1.0)  # set top-k positions to 1
         
         # Update assignment counts for load balancing
         if self.training:
-            flat_indices = indices.flatten()
-            self.assignment_count.index_add_(0, flat_indices, torch.ones_like(flat_indices, dtype=torch.float))
-        
+            ci = torch.bincount(selected_experts.flatten(), minlength=self.r).float()
+            delta_bias = (ci.mean() - ci).sign()
+            self.d.data = self.d.data + self.bias_lr * delta_bias
+            
         # Compute output using only activated experts
-        # Only the columns of B corresponding to top-k indices contribute
-        activated_y = y * mask  # zero out non-top-k projections
+        activated_y = y * mask
         output = F.linear(activated_y, self.B) * (self.alpha / self.r)
         
         return output
